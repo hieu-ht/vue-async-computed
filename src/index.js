@@ -18,6 +18,7 @@ import {
 } from './shouldUpdate'
 
 const prefix = '_async_computed$'
+let vueInstance
 
 const AsyncComputed = {
   install (Vue, pluginOptions) {
@@ -186,8 +187,14 @@ function generateDefault (fn, pluginOptions) {
 export default AsyncComputed
 export { AsyncComputed as AsyncComputedPlugin, AsyncComputedMixin }
 
-/* istanbul ignore if */
-if (typeof window !== 'undefined' && window.Vue) {
-  // Auto install in dist mode
-  window.Vue.use(AsyncComputed)
+export function finish () {
+  if (typeof window !== 'undefined' && window.Vue && window.Vue.use) {
+    window.Vue.use(AsyncComputed)
+  } else if (vueInstance) {
+    vueInstance.use(AsyncComputed)
+  }
+}
+
+export function register (Vue) {
+  vueInstance = Vue
 }
