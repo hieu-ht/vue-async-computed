@@ -10,6 +10,8 @@ import {
 const prefix = '_async_computed$'
 const DidNotUpdate = typeof Symbol === 'function' ? Symbol('did-not-update') : {}
 
+let vueInstance
+
 const AsyncComputed = {
   install (Vue, pluginOptions) {
     pluginOptions = pluginOptions || {}
@@ -185,8 +187,13 @@ function generateDefault (fn, pluginOptions) {
 
 export default AsyncComputed
 
-/* istanbul ignore if */
-if (typeof window !== 'undefined' && window.Vue) {
-  // Auto install in dist mode
-  window.Vue.use(AsyncComputed)
+export function install () {
+  if (typeof window !== 'undefined' && window.Vue && window.Vue.use) {
+    window.Vue.use(AsyncComputed)
+  } else if (vueInstance) {
+    vueInstance.use(AsyncComputed)
+  }
+}
+export function register (Vue) {
+  vueInstance = Vue
 }
